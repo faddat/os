@@ -8,13 +8,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      
+      - name: Docker Layer Caching
+        uses: satackey/action-docker-layer-caching@v0.0.8
         
       - name: os
         run: make os
         
       - name: image
         run: make image
-      
+            
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.2.0
         with:
