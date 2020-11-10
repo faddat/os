@@ -75,7 +75,7 @@ os: $(_BUILDER_DIR)
 
 
 $(_BUILDER_DIR):
-	git clone --depth=1 https://github.com/mdevaev/pi-builder $(_BUILDER_DIR)
+	git clone --depth=1 https://github.com/faddat/pi-builder --branch patch-1 $(_BUILDER_DIR)
 
 
 update: $(_BUILDER_DIR)
