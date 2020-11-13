@@ -2,7 +2,7 @@
 
 BOARD ?= rpi4
 PLATFORM ?= v2-hdmi
-STAGES ?= __init__ os pikvm-repo watchdog ro no-audit pikvm pikvm-image __cleanup__
+STAGES ?= __init__ os no-audit pikvm-image __cleanup__
 
 HOSTNAME ?= pikvm
 LOCALE ?= en_US
@@ -49,7 +49,7 @@ shell: $(_BUILDER_DIR)
 
 os: $(_BUILDER_DIR)
 	rm -rf $(_BUILDER_DIR)/stages/{pikvm,pikvm-image,pikvm-otg-console}
-	cp -a pikvm pikvm-image pikvm-otg-console $(_BUILDER_DIR)/stages
+	cp -a pikvm-image $(_BUILDER_DIR)/stages
 	make -C $(_BUILDER_DIR) os \
 		NC=$(NC) \
 		BUILD_OPTS=" $(BUILD_OPTS) \
