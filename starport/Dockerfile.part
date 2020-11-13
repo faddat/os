@@ -1,0 +1,24 @@
+ARG PLATFORM
+RUN echo $INSTALLATION
+
+RUN pkg-install \
+	netctl \
+	parted \
+	e2fsprogs
+
+COPY stages/starport/motd /etc/
+
+RUN sed -i -f /usr/share/kvmd/configs.default/os/cmdline/$PLATFORM-$BOARD.sed /boot/cmdline.txt \
+	&& cp /usr/share/kvmd/configs.default/os/boot-config/$PLATFORM-$BOARD.txt /boot/config.txt
+
+RUN sed -i -e "s/-session   optional   pam_systemd.so/#-session   optional   pam_systemd.so/g" /etc/pam.d/system-login
+
+ARG ROOT_PASSWD
+ENV ROOT_PASSWD $ROOT_PASSWD
+RUN echo "root:$ROOT_PASSWD" | chpasswd \
+	&& echo "PermitRootLogin yes" >> /etc/ssh/sshd_config \
+	&& userdel -r -f alarm
+
+COPY stages/pikvm-image/firstboot.sh /usr/local/bin/firstboot.sh
+COPY stages/pikvm-image/firstboot.service /etc/systemd/system/firstboot.service
+RUN systemctl enable firstboot
