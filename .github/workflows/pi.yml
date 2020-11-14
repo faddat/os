@@ -8,9 +8,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      
-      - name: Docker Layer Caching
-        uses: satackey/action-docker-layer-caching@v0.0.8
         
       - name: os
         run: make os
