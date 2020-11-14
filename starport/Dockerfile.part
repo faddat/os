@@ -22,3 +22,5 @@ RUN echo "root:$ROOT_PASSWD" | chpasswd \
 COPY stages/pikvm-image/firstboot.sh /usr/local/bin/firstboot.sh
 COPY stages/pikvm-image/firstboot.service /etc/systemd/system/firstboot.service
 RUN systemctl enable firstboot
+
+pacman -Syyu go npm yarn

@@ -1,23 +1,17 @@
 -include config.mk
 
 BOARD ?= rpi4
-PLATFORM ?= v2-hdmi
+PLATFORM ?= pi
 STAGES ?= __init__ os no-audit pikvm-image __cleanup__
 
-HOSTNAME ?= pikvm
+HOSTNAME ?= starport
 LOCALE ?= en_US
 TIMEZONE ?= Europe/Moscow
 #REPO_URL ?= http://mirror.yandex.ru/archlinux-arm
 REPO_URL ?= http://de3.mirror.archlinuxarm.org
 BUILD_OPTS ?=
 
-WIFI_ESSID ?=
-WIFI_PASSWD ?=
-WIFI_IFACE ?= wlan0
-
 ROOT_PASSWD ?= root
-WEBUI_ADMIN_PASSWD ?= admin
-IPMI_ADMIN_PASSWD ?= admin
 
 CARD ?= /dev/mmcblk0
 
@@ -106,7 +100,7 @@ clean-all:
 image:
 	mkdir -p images
 	sudo bash -x -c ' \
-		dd if=/dev/zero of=images/$(PLATFORM)-$(BOARD).img bs=512 count=12582912 \
+		dd if=/dev/zero of=images/$(PLATFORM)-$(BOARD).img bs=512 count=6291456 \
 		&& device=`losetup --find --show images/$(PLATFORM)-$(BOARD).img` \
 		&& make install CARD=$$device \
 		&& losetup -d $$device \
@@ -115,6 +109,3 @@ image:
 	sha1sum images/$(PLATFORM)-$(BOARD).img.bz2 | awk '{print $$1}' > images/$(PLATFORM)-$(BOARD).img.bz2.sha1
 
 
-upload:
-	rsync -rl --progress --delete images root@pikvm.org:/var/www/images2
-	ssh root@pikvm.org "bash -c 'mv /var/www/images2/* /var/www/images/; rmdir /var/www/images2'"
