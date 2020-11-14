@@ -27,4 +27,4 @@ jobs:
       - name: Build it
         run: |
           cd starport
-          docker buildx build --platform linux/arm64 .
+          ./build.sh
