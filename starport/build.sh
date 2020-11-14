@@ -4,5 +4,5 @@ wget --progress=bar:force:noscroll http://os.archlinuxarm.org/os/ArchLinuxARM-rp
 
 export ROOT_PASSWD=root
 
-docker buildx build --build-args ROOT_PASSWD --platform linux/arm64 .
+docker buildx build --build-arg ROOT_PASSWD --platform linux/arm64 .
 

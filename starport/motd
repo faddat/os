@@ -1,10 +1,10 @@
 
-	         __                              __ 
+	         __                              __
 	   _____/ /_____ __________  ____  _____/ /_
 	  / ___/ __/ __ `/ ___/ __ \/ __ \/ ___/ __/
-	 (__  ) /_/ /_/ / /  / /_/ / /_/ / /  / /_  
-	/____/\__/\__,_/_/  / .___/\____/_/   \__/  
-        	           /_/                      
+	 (__  ) /_/ /_/ / /  / /_/ / /_/ / /  / /_
+	/____/\__/\__,_/_/  / .___/\____/_/   \__/
+        	           /_/
 
 
     Starport - Fast, sovereign blockchain development and deployment.
@@ -19,8 +19,8 @@
     * Go
     * nodejs, npm and yarn
     * ZeroTier Virtual Network
-    * hnsd p2p dns
-    * SPEAR for secure communication
+    * hsd p2p dns
+	* IPFS Daemon
 
     By deploying your blockchain as hardware, your community gains independence.
 
