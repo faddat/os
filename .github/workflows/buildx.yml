@@ -27,4 +27,4 @@ jobs:
       - name: Build it
         run: |
           cd starport
-          ./build.sh
+          bash build.sh
