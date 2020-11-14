@@ -115,12 +115,13 @@ COPY motd /etc/
 
 RUN sed -i -e "s/-session   optional   pam_systemd.so/#-session   optional   pam_systemd.so/g" /etc/pam.d/system-login
 
-ARG ROOT_PASSWD
-ENV ROOT_PASSWD $ROOT_PASSWD
+# This should be phased out most likely.
+# ARG ROOT_PASSWD
+# ENV ROOT_PASSWD $ROOT_PASSWD
 
-# Set Root Password
-# Note:
-RUN echo "root:$ROOT_PASSWD" | chpasswd \
+
+# Set root password to root
+RUN echo "root:root" | chpasswd \
 	&& echo "PermitRootLogin yes" >> /etc/ssh/sshd_config \
 	&& userdel -r -f alarm
 
@@ -131,6 +132,7 @@ RUN systemctl enable firstboot
 
 # CLEANUP: Always here
 
+# Remove setup-related cruft
 RUN rm -rf \
 /etc/*- \
 /var/lib/systemd/* \
