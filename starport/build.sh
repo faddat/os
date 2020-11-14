@@ -2,5 +2,7 @@
 
 wget --progress=bar:force:noscroll http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
 
-docker buildx build --platform linux/arm64 .
+export ROOT_PASSWD=root
+
+docker buildx build --build-args ROOT_PASSWD --platform linux/arm64 .
 

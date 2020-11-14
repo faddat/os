@@ -54,8 +54,10 @@ RUN pacman --noconfirm -Syy \
 				archlinux-keyring \
 				ca-certificates \
 				ca-certificates-mozilla \
-				ca-certificates-utils \
-		&& pacman --needed --noconfirm -S \
+				ca-certificates-utils
+
+# Dependencies more specific to our purposes
+RUN pacman --needed --noconfirm -S \
 				base \
 				base-devel \
 				vim \
@@ -73,12 +75,16 @@ RUN pacman --noconfirm -Syy \
 				git \
 				jshon \
 				rng-tools \
+				nano \
 				bc \
 				go \
 				npm \
+				go-ipfs \
+				zerotier-one
 				yarn \
 				netctl \
 				parted \
+				jq \
 				e2fsprogs
 
 
@@ -96,8 +102,8 @@ RUN echo 'RNGD_OPTS="-o /dev/random -r /dev/hwrng"' > /etc/conf.d/rngd \
 		&& systemctl enable rngd
 
 # systemd-resolved: we will use hnsd instead
-# RUN echo "DNSSEC=no" >> /etc/systemd/resolved.conf \
-#		&& systemctl enable systemd-resolved
+RUN echo "DNSSEC=no" >> /etc/systemd/resolved.conf \
+		&& systemctl enable systemd-resolved
 
 
 # Maybe do things like this to make the shell pretty
@@ -113,7 +119,7 @@ RUN echo 'RNGD_OPTS="-o /dev/random -r /dev/hwrng"' > /etc/conf.d/rngd \
 
 COPY motd /etc/
 
-RUN sed -i -e "s/-session   optional   pam_systemd.so/#-session   optional   pam_systemd.so/g" /etc/pam.d/system-login
+# RUN sed -i -e "s/-session   optional   pam_systemd.so/#-session   optional   pam_systemd.so/g" /etc/pam.d/system-login
 
 # This should be phased out most likely.
 # ARG ROOT_PASSWD
@@ -144,8 +150,7 @@ RUN rm -rf \
 /root/.bash_history \
 /root/.cache \
 /home/*/.bash_history \
-/home/*/.cache \
-`LC_ALL=C pacman -Qo /var/cache/* 2>&1 | grep 'error: No package owns' | awk '{print $5}'`
+/home/*/.cache
 
 RUN sed -i -e "s/^#!!!CheckSpace/CheckSpace/g" /etc/pacman.conf
 
