@@ -80,7 +80,7 @@ RUN pacman --needed --noconfirm -S \
 				go \
 				npm \
 				go-ipfs \
-				zerotier-one
+				zerotier-one \
 				yarn \
 				netctl \
 				parted \
