@@ -96,8 +96,8 @@ RUN echo 'RNGD_OPTS="-o /dev/random -r /dev/hwrng"' > /etc/conf.d/rngd \
 		&& systemctl enable rngd
 
 # systemd-resolved: we will use hnsd instead
-RUN echo "DNSSEC=no" >> /etc/systemd/resolved.conf \
-		&& systemctl enable systemd-resolved
+# RUN echo "DNSSEC=no" >> /etc/systemd/resolved.conf \
+#		&& systemctl enable systemd-resolved
 
 
 # Maybe do things like this to make the shell pretty
