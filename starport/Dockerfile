@@ -12,6 +12,9 @@ ADD ArchLinuxARM-rpi-aarch64-latest.tar.gz /
 # ARG TIMEZONE
 # ENV TIMEZONE $TIMEZONE
 
+ARG REPO_URL
+ENV REPO_URL $REPO_URL
+
 # OS:
 
 # https://lists.gnu.org/archive/html/qemu-devel/2017-10/msg03681.html
@@ -22,7 +25,7 @@ RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
 ENV LC_ALL en_US.UTF-8
 
 # Set Time Zone
-RUN timedatectl set-timezone UTC
+# RUN timedatectl set-timezone UTC
 
 # Configure Kernel
 RUN echo "HOOKS=(base udev block filesystems)" >> /etc/mkinitcpio.conf && \
@@ -32,12 +35,14 @@ RUN echo "HOOKS=(base udev block filesystems)" >> /etc/mkinitcpio.conf && \
 #		&& pacman-key --init \
 #		&& pacman-key --populate archlinuxarm
 
-
+# Pacman Keyring
 RUN pacman-key --init \
 		&& pacman-key --populate archlinuxarm
 
+# Don't check disk space
 RUN sed -i -e "s/^CheckSpace/#!!!CheckSpace/g" /etc/pacman.conf
 
+# Install depenencies
 RUN pacman --noconfirm -Syy \
 		&& pacman --needed --noconfirm -S \
 				glibc \
@@ -94,6 +99,8 @@ RUN echo 'RNGD_OPTS="-o /dev/random -r /dev/hwrng"' > /etc/conf.d/rngd \
 RUN echo "DNSSEC=no" >> /etc/systemd/resolved.conf \
 		&& systemctl enable systemd-resolved
 
+
+# Maybe do things like this to make the shell pretty
 # RUN mkdir /tmp/linux-profile \
 #		&& git clone https://github.com/mdevaev/linux-profile.git /tmp/linux-profile --depth=1 \
 #		&& cp -a /tmp/linux-profile/{.bash_profile,.bashrc,.vimrc,.vimpagerrc,.vim} /etc/skel \
@@ -111,7 +118,8 @@ RUN sed -i -e "s/-session   optional   pam_systemd.so/#-session   optional   pam
 ARG ROOT_PASSWD
 ENV ROOT_PASSWD $ROOT_PASSWD
 
-
+# Set Root Password
+# Note:
 RUN echo "root:$ROOT_PASSWD" | chpasswd \
 	&& echo "PermitRootLogin yes" >> /etc/ssh/sshd_config \
 	&& userdel -r -f alarm
