@@ -2,7 +2,7 @@
 
 BOARD ?= rpi4
 PLATFORM ?= pi
-STAGES ?= __init__ os no-audit pikvm-image __cleanup__
+STAGES ?= __init__ os no-audit starport __cleanup__
 
 HOSTNAME ?= starport
 LOCALE ?= en_US
