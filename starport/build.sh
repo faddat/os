@@ -12,7 +12,7 @@
 set -exo pipefail
 
 # Get the 64 bit rpi rootfs for Pi 3 and 4
-wget --progress=bar:force:noscroll http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
+wget -nc --progress=bar:force:noscroll http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
 
 # Reintroduce later
 # export ROOT_PASSWD=root
@@ -29,36 +29,71 @@ docker buildx build --rm --tag toolbox --file toolbox/Dockerfile.root --load too
 
 # EXTRACT IMAGE
 # Make a temporary directory
+rm -rf .tmp | true
 mkdir .tmp
+
 # remove anything in the way of extraction
 docker run --rm --tty --volume $(pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. toolbox rm -rf ./.tmp/result-rootfs
+
 # save the image to result-rootfs.tar
 docker save --output ./.tmp/result-rootfs.tar starport
+
 # Extract the image using docker-extract
 docker run --rm --tty --volume $(pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. toolbox /tools/docker-extract --root ./.tmp/result-rootfs  ./.tmp/result-rootfs.tar
+
 # Set hostname
 bash -c "echo starport > ./.tmp/result-rootfs/etc/hostname"
 
+# Remove run/*
+rm -rf ./.tmp/result-rootfs/run/*
 
 
-# Make the .img file
+
+# ===================================================================================
+# IMAGE: Make a .img file and compress it.
+# Uses Techniques from Disconnected Systems:
+# https://disconnected.systems/blog/raspberry-pi-archlinuxarm-setup/
+# ===================================================================================
+
+# Create a folder for images
 mkdir -p images
-sudo bash -x -c ' \
-# Create an empty image file and fill it with zeros.  6GB in this case.
-	dd if=/dev/zero of=images/starport.img bs=512 count=12582912 \
-	&& device=`losetup --find --show images/starport.img` \
+
+
+# Make the image file
+fallocate -l 2G "starport.img"
+
+
+# loop-mount the image file so it becomes a disk
+losetup --find --show images/starport.img
+
+# partition the loop-mounted disk
+parted --script /dev/loop0 mklabel msdos
+parted --script /dev/loop0 mkpart primary fat32 0% 100M
+parted --script /dev/loop0 mkpart primary ext4 100M 100%
+
+# format the newly partitioned loop-mounted disk
+mkfs.vfat -F32 /dev/loop0p1
+mkfs.ext4 -F /dev/loop0p2
+
+
 # Use the toolbox to copy the rootfs into the filesystem
 	&& docker run --rm --tty --privileged --volume $(pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. toolbox bash -c " \
+# * mount the disk's /boot and / partitions
+
 		mkdir -p mnt/boot mnt/rootfs \
-		&& mount /dev/mmcblk1p1 mnt/boot \
-		&& mount /dev/mmcblk1p2 mnt/rootfs \
+		&& mount /dev/loop0p1 mnt/boot \
+		&& mount /dev/loop0p2 mnt/rootfs \
+# * use rsync to copy files into the filesystem
 		&& rsync -a --info=progress2 ./.tmp/result-rootfs/boot/* mnt/boot \
 		&& rsync -a --info=progress2 ./.tmp/result-rootfs/* mnt/rootfs --exclude boot \
+# make a folder to mounnt the boot partition to
 		&& mkdir mnt/rootfs/boot \
 		&& umount mnt/boot mnt/rootfs \
 	"
-	&& losetup -d $$device \
-'
+
+# Unmount the loop-mounnted disk
+losetup -d /dev/loop0
+
 # Compress the image
 bzip2 images/starport.img
 sha1sum images/starport.img.bz2 | awk '{print $$1}' > images/starport.img.bz2.sha1
