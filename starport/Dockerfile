@@ -92,7 +92,7 @@ RUN pacman --noconfirm -S \
 				unbound
 
 
-# systemd-resolved: we will use hnsd instead
+# systemd-resolved: we will use hsd instead
 # RUN echo "DNSSEC=no" >> /etc/systemd/resolved.conf \
 #		&& systemctl enable systemd-resolved
 
@@ -170,7 +170,7 @@ RUN rm -rf \
 /var/log/* \
 /var/tmp/* \
 /tmp/* \
-# /run/* \   <- TODO: determinne wny this can no longer be nuked.
+# /run/* \   <- TODO: determine why this can no longer be nuked.
 /root/.bash_history \
 /root/.cache \
 /home/*/.bash_history \

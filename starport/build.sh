@@ -37,6 +37,6 @@ docker run --rm --tty --volume $(shell pwd)/./.tmp:/root/./.tmp --workdir /root/
 # save the image to result-rootfs.tar
 docker save --output ./.tmp/result-rootfs.tar starport
 # Extract the image using docker-extract
-docker run --rm --tty --volume $(shell pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. toolbox /tools/docker-extract --root ./.tmp/result-rootfs  ./.tmp/result-rootfs.tar
+docker run --rm --tty --volume $(pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. toolbox /tools/docker-extract --root ./.tmp/result-rootfs  ./.tmp/result-rootfs.tar
 # Set hostname
 bash -c "echo starport > ./.tmp/result-rootfs/etc/hostname"
