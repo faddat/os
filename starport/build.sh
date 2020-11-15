@@ -21,7 +21,7 @@ wget --progress=bar:force:noscroll http://os.archlinuxarm.org/os/ArchLinuxARM-rp
 
 # BUILD IMAGE
 # --build-arg ROOT_PASSWD
-docker buildx build --tag starport --platform linux/arm64 .
+docker buildx build --tag starport --platform linux/arm64 --load .
 
 
 # PREPARE TOOLBOX
