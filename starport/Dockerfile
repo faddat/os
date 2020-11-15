@@ -88,8 +88,13 @@ RUN pacman --noconfirm -S \
 				go-ipfs \
 				zerotier-one \
 				yarn \
-				jq
+				jq \
+				unbound
 
+
+# systemd-resolved: we will use hnsd instead
+#RUN echo "DNSSEC=no" >> /etc/systemd/resolved.conf \
+#		&& systemctl enable systemd-resolved
 
 
 # Set up wifi, which has the side effect of allowing us to finish the build
@@ -109,11 +114,6 @@ export config="/etc/netctl/$WIFI_IFACE-${WIFI_ESSID/ /_}" \
 RUN echo 'RNGD_OPTS="-o /dev/random -r /dev/hwrng"' > /etc/conf.d/rngd \
 		&& systemctl disable haveged \
 		&& systemctl enable rngd
-
-
-# systemd-resolved: we will use hnsd instead
-RUN echo "DNSSEC=no" >> /etc/systemd/resolved.conf \
-		&& systemctl enable systemd-resolved
 
 
 # Maybe do things like this to make the shell pretty
@@ -161,19 +161,11 @@ RUN git clone https://github.com/handshake-org/hsd && \
 # CLEANUP: Always here
 
 # Remove cruft
-RUN rm -rf \
-/etc/*- \
-/var/lib/systemd/* \
-/var/lib/private/* \
-/var/log/* \
-/var/tmp/* \
-/tmp/* \
-/run/* \
-/root/.bash_history \
-/root/.cache \
-/home/*/.bash_history \
-/home/*/.cache
+# Maybe nuke /run/* later
 
+RUN rm -rf \ /etc/*- \ /var/lib/systemd/* \ /var/lib/private/* \ /var/log/* \ /var/tmp/* \ /tmp/* \ 
+/root/.bash_history \ /root/.cache \ /home/*/.bash_history \ /home/*/.cache
+                                                                                                                         
 # In the future, check that there is enough space
 RUN sed -i -e "s/^#!!!CheckSpace/CheckSpace/g" /etc/pacman.conf
 
