@@ -85,11 +85,10 @@ RUN echo "DNSSEC=no" >> /etc/systemd/resolved.conf && \
 
 
 # yay
-RUN pacman -S --needed --noconfirm sudo && \
-		useradd builduser -m && \
+RUN	useradd builduser -m && \
 		passwd -d builduser && \
 		printf 'builduser ALL=(ALL) ALL\n' | tee -a /etc/sudoers && \
-		sudo -u builduser bash -c 'cd ~ && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -s --noconfirm'
+		sudo -u builduser bash -c 'cd ~/ && git clone https://aur.archlinux.org/yay.git yay && cd yay && makepkg -s --noconfirm'
 
 
 # Set up wifi, which has the side effect of allowing us to finish the build
@@ -159,6 +158,9 @@ RUN systemctl enable systemd-resolved
 
 # enable mdns
 RUN systemd-resolve --set-mdns=yes --interface=eth0
+
+# enable zerotier-one
+RUN systemctl enable zerotier-one
 
 
 # mdns makes it easy to find your pi
