@@ -79,19 +79,18 @@ mkfs.ext4 -F /dev/loop0p2
 # Use the toolbox to copy the rootfs into the filesystem
 	&& docker run --rm --tty --privileged --volume $(pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. toolbox bash -c " \
 # * mount the disk's /boot and / partitions
-
-		mkdir -p mnt/boot mnt/rootfs \
-		&& mount /dev/loop0p1 mnt/boot \
-		&& mount /dev/loop0p2 mnt/rootfs \
+		mkdir -p mnt/boot mnt/rootfs && \
+		mount /dev/loop0p1 mnt/boot && \
+		mount /dev/loop0p2 mnt/rootfs && \
 # * use rsync to copy files into the filesystem
-		&& rsync -a --info=progress2 ./.tmp/result-rootfs/boot/* mnt/boot \
-		&& rsync -a --info=progress2 ./.tmp/result-rootfs/* mnt/rootfs --exclude boot \
+		rsync -a --info=progress2 ./.tmp/result-rootfs/boot/* mnt/boot && \
+		rsync -a --info=progress2 ./.tmp/result-rootfs/* mnt/rootfs --exclude boot && \
 # make a folder to mounnt the boot partition to
-		&& mkdir mnt/rootfs/boot \
-		&& umount mnt/boot mnt/rootfs \
+		mkdir mnt/rootfs/boot && \
+		umount mnt/boot mnt/rootfs
 	"
 
-# Unmount the loop-mounnted disk
+# Unmount the loop-mounted disk
 losetup -d /dev/loop0
 
 # Compress the image

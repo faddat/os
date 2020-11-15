@@ -69,7 +69,7 @@ RUN pacman --noconfirm -S \
 				parted
 
 
-# dependency is specific to our work
+# dependencies is specific to our work
 RUN pacman --noconfirm -S \
 				go \
 				npm \
@@ -80,15 +80,24 @@ RUN pacman --noconfirm -S \
 				unbound
 
 
-# systemd-resolved: we will use hsd instead
-# RUN echo "DNSSEC=no" >> /etc/systemd/resolved.conf \
-#		&& systemctl enable systemd-resolved
+# disable dnssec
+RUN echo "DNSSEC=no" >> /etc/systemd/resolved.conf \
+		&& systemctl enable systemd-resolved
+
+
+# yay
+RUN pacman -S --needed --noconfirm sudo && \# Install sudo
+		useradd builduser -m && \ # Create the builduser
+		passwd -d builduser && \# Delete the buildusers password
+		printf 'builduser ALL=(ALL) ALL\n' | tee -a /etc/sudoers && \# Allow the builduser passwordless sudo
+		sudo -u builduser bash -c 'cd ~ && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -s --noconfirm'  # Clone and build a package
 
 
 # Set up wifi, which has the side effect of allowing us to finish the build
-RUN pacman -S --noconfirm wpa_supplicant wpa_actiond ifplugd crda dialog && \
-		systemctl enable netctl-auto@wlan0.service && \
-		systemctl enable netctl-ifplugd@eth0.service
+# but would have taken systemd-networkd away from us.
+# RUN pacman -Syyu --noconfirm wpa_supplicant wpa_actiond ifplugd crda dialog && \
+#		systemctl enable netctl-auto@wlan0.service && \
+#		systemctl enable netctl-ifplugd@eth0.service
 
 
 RUN cat <<EOF >"/etc/netctl/wlan0-SSID" \
@@ -102,9 +111,9 @@ RUN cat <<EOF >"/etc/netctl/wlan0-SSID" \
 		EOF
 
 # Use the Pi's Hardware rng.  You may wish to modify depending on your needs and desires: https://wiki.archlinux.org/index.php/Random_number_generation#Alternatives
-RUN echo 'RNGD_OPTS="-o /dev/random -r /dev/hwrng"' > /etc/conf.d/rngd \
-		&& systemctl disable haveged \
-		&& systemctl enable rngd
+RUN echo 'RNGD_OPTS="-o /dev/random -r /dev/hwrng"' > /etc/conf.d/rngd && \
+		systemctl disable haveged && \
+		systemctl enable rngd
 
 
 # Maybe do things like this to make the shell pretty, later.
@@ -120,8 +129,8 @@ RUN echo 'RNGD_OPTS="-o /dev/random -r /dev/hwrng"' > /etc/conf.d/rngd \
 COPY motd /etc/
 
 # Set root password to root
-RUN echo "root:root" | chpasswd \
-	&& echo "PermitRootLogin yes" >> /etc/ssh/sshd_config \
+RUN echo "root:root" | chpasswd && \
+	&& echo "PermitRootLogin yes" >> /etc/ssh/sshd_config && \
 	&& userdel -r -f alarm
 
 # First Boot service
