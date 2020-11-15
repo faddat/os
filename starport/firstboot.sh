@@ -14,6 +14,5 @@ ssh-keygen -v -A
 # Later, make this automatic based on location.
 timedatectl set-timezone UTC
 
-
 # Don't run again
 systemctl disable pikvm-firstboot

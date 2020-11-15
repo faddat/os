@@ -1,4 +1,6 @@
-# INIT
+# =================================================================
+# INIT: Consume args and the root filesystem
+# =================================================================
 
 # Start with nothing
 FROM scratch
@@ -6,26 +8,15 @@ FROM scratch
 # Add and decomprress Arch Linux ARM rpi arm64 rootfs at /
 ADD ArchLinuxARM-rpi-aarch64-latest.tar.gz /
 
-# Docker buildx replaces this
-# COPY "qemu-%QEMU_GUEST_ARCH%-static" "%QEMU_STATIC_GUEST_PATH%"
-
-# ARG TIMEZONE
-# ENV TIMEZONE $TIMEZONE
-
-ARG REPO_URL
-ENV REPO_URL $REPO_URL
-
-# OS:
-
-# https://lists.gnu.org/archive/html/qemu-devel/2017-10/msg03681.html
+# =================================================================
+# OS: This is where we set up the operating system.
+# =================================================================
 
 # Set System Locale
 RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
 		&& locale-gen
 ENV LC_ALL en_US.UTF-8
 
-# Set Time Zone
-# RUN timedatectl set-timezone UTC
 
 # Configure Kernel
 RUN echo "HOOKS=(base udev block filesystems)" >> /etc/mkinitcpio.conf && \
@@ -39,7 +30,7 @@ RUN echo "HOOKS=(base udev block filesystems)" >> /etc/mkinitcpio.conf && \
 RUN pacman-key --init \
 		&& pacman-key --populate archlinuxarm
 
-# Don't check disk space
+# Don't check disk space, otherwise pacman will go nuts.
 RUN sed -i -e "s/^CheckSpace/#!!!CheckSpace/g" /etc/pacman.conf
 
 # Make Pacman Work
@@ -81,7 +72,7 @@ RUN pacman --noconfirm -S \
 				parted
 
 
-
+# dependency is specific to our work
 RUN pacman --noconfirm -S \
 				go \
 				npm \
@@ -116,7 +107,7 @@ RUN echo 'RNGD_OPTS="-o /dev/random -r /dev/hwrng"' > /etc/conf.d/rngd \
 		&& systemctl enable rngd
 
 
-# Maybe do things like this to make the shell pretty
+# Maybe do things like this to make the shell pretty, later.
 # RUN mkdir /tmp/linux-profile \
 #		&& git clone https://github.com/mdevaev/linux-profile.git /tmp/linux-profile --depth=1 \
 #		&& cp -a /tmp/linux-profile/{.bash_profile,.bashrc,.vimrc,.vimpagerrc,.vim} /etc/skel \
@@ -158,7 +149,9 @@ RUN git clone https://github.com/handshake-org/hsd && \
 		npm install --production --global
 
 
-# CLEANUP: Always here
+# =================================================================
+# CLEANUP: Make the OS new and shiny.
+# =================================================================
 
 # Remove cruft
 # Maybe nuke /run/* later
@@ -170,7 +163,7 @@ RUN rm -rf \
 /var/log/* \
 /var/tmp/* \
 /tmp/* \
-# /run/* \   <- TODO: determine why this can no longer be nuked.
+# /run/* \   <- TODO: determine why this can no longer be nuked.  For now, nuking in build.sh
 /root/.bash_history \
 /root/.cache \
 /home/*/.bash_history \
