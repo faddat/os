@@ -24,7 +24,7 @@ docker buildx build --tag starport --platform linux/arm64 --load .
 
 
 # PREPARE TOOLBOX
-docker build --rm --tag toolbox --file toolbox/Dockerfile.root --load toolbox
+docker buildx build --rm --tag toolbox --file toolbox/Dockerfile.root --load toolbox
 
 
 # EXTRACT IMAGE
