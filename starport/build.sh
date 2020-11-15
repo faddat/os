@@ -30,17 +30,5 @@ docker run --rm --tty --volume $(shell pwd)/./.tmp:/root/./.tmp --workdir /root/
 docker save --output ./.tmp/result-rootfs.tar starport
 # Extract the image using docker-extract
 docker run --rm --tty --volume $(shell pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. toolbox /tools/docker-extract --root ./.tmp/result-rootfs  ./.tmp/result-rootfs.tar
-
-
-
-
-
-
-
-docker save --output $(_RPI_RESULT_ROOTFS_TAR) $(call read_builded_config,IMAGE)
-$(__DOCKER_RUN_TMP) /tools/docker-extract --root $(_RPI_RESULT_ROOTFS) $(_RPI_RESULT_ROOTFS_TAR)
-$(__DOCKER_RUN_TMP) bash -c " \
-	echo $(call read_builded_config,HOSTNAME) > $(_RPI_RESULT_ROOTFS)/etc/hostname \
-	&& (test -z '$(call optbool,$(QEMU_RM))' || rm $(_RPI_RESULT_ROOTFS)/$(_QEMU_STATIC_GUEST_PATH)) \
-"
-$(call say,"Extraction complete")
+# Set hostname to starpot
+bash -c "echo starport > ./.tmp/result-rootfs/etc/hostname"
