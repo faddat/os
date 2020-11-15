@@ -122,8 +122,8 @@ COPY motd /etc/
 
 # Set root password to root
 RUN echo "root:root" | chpasswd && \
-	&& echo "PermitRootLogin yes" >> /etc/ssh/sshd_config && \
-	&& userdel -r -f alarm
+		echo "PermitRootLogin yes" >> /etc/ssh/sshd_config && \
+		userdel -r -f alarm
 
 # First Boot service
 COPY firstboot.sh /usr/local/bin/firstboot.sh
