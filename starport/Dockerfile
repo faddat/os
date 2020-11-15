@@ -6,7 +6,7 @@ FROM scratch
 # Add and decomprress Arch Linux ARM rpi arm64 rootfs at /
 ADD ArchLinuxARM-rpi-aarch64-latest.tar.gz /
 
-# Might be able to avoid by using buildx
+# Docker buildx replaces this
 # COPY "qemu-%QEMU_GUEST_ARCH%-static" "%QEMU_STATIC_GUEST_PATH%"
 
 # ARG TIMEZONE
@@ -42,21 +42,21 @@ RUN pacman-key --init \
 # Don't check disk space
 RUN sed -i -e "s/^CheckSpace/#!!!CheckSpace/g" /etc/pacman.conf
 
-# Install depenencies
+# Make Pacman Work
 RUN pacman --noconfirm -Syy \
-		&& pacman --needed --noconfirm -S \
+		&& pacman --noconfirm -S \
 				glibc \
 				pacman \
 		&& pacman-db-upgrade \
 		&& pacman --noconfirm -Syu \
-		&& pacman --needed --noconfirm -S \
+		&& pacman --noconfirm -S \
 				archlinux-keyring \
 				ca-certificates \
 				ca-certificates-mozilla \
 				ca-certificates-utils
 
 # Utilities
-RUN pacman --needed --noconfirm -S \
+RUN pacman --noconfirm -S \
 				base \
 				base-devel \
 				vim \
@@ -93,7 +93,7 @@ RUN pacman --noconfirm -S \
 
 
 # systemd-resolved: we will use hnsd instead
-#RUN echo "DNSSEC=no" >> /etc/systemd/resolved.conf \
+# RUN echo "DNSSEC=no" >> /etc/systemd/resolved.conf \
 #		&& systemctl enable systemd-resolved
 
 
@@ -163,9 +163,21 @@ RUN git clone https://github.com/handshake-org/hsd && \
 # Remove cruft
 # Maybe nuke /run/* later
 
-RUN rm -rf \ /etc/*- \ /var/lib/systemd/* \ /var/lib/private/* \ /var/log/* \ /var/tmp/* \ /tmp/* \ 
-/root/.bash_history \ /root/.cache \ /home/*/.bash_history \ /home/*/.cache
-                                                                                                                         
+RUN rm -rf \
+/etc/*- \
+/var/lib/systemd/* \
+/var/lib/private/* \
+/var/log/* \
+/var/tmp/* \
+/tmp/* \
+# /run/* \   <- TODO: determinne wny this can no longer be nuked.
+/root/.bash_history \
+/root/.cache \
+/home/*/.bash_history \
+/home/*/.cache \
+`LC_ALL=C pacman -Qo /var/cache/* 2>&1 | grep 'error: No package owns' | awk '{print $5}'`
+
+
 # In the future, check that there is enough space
 RUN sed -i -e "s/^#!!!CheckSpace/CheckSpace/g" /etc/pacman.conf
 
