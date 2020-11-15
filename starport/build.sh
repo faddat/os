@@ -12,7 +12,7 @@
 set -exo pipefail
 
 # Get the 64 bit rpi rootfs for Pi 3 and 4
-wget --progress=bar:force:noscroll http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
+# wget --progress=bar:force:noscroll http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
 
 # Reintroduce later
 # export ROOT_PASSWD=root
@@ -24,7 +24,7 @@ docker buildx build --tag starport --platform linux/arm64 --load .
 
 
 # PREPARE TOOLBOX
-docker build --rm --tag toolbox --file toolbox/Dockerfile.root toolbox
+docker build --rm --tag toolbox --file toolbox/Dockerfile.root --load toolbox
 
 
 # EXTRACT IMAGE
