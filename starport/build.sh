@@ -44,10 +44,6 @@ docker run --rm --tty --volume $(pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp
 # Set hostname
 bash -c "echo starport > ./.tmp/result-rootfs/etc/hostname"
 
-# Remove run/*
-rm -rf ./.tmp/result-rootfs/run/*
-
-
 
 # ===================================================================================
 # IMAGE: Make a .img file and compress it.
@@ -85,12 +81,12 @@ mkfs.ext4 -F /dev/loop0p2
 # * use rsync to copy files into the filesystem
 		rsync -a --info=progress2 ./.tmp/result-rootfs/boot/* mnt/boot && \
 		rsync -a --info=progress2 ./.tmp/result-rootfs/* mnt/rootfs --exclude boot && \
-# make a folder to mounnt the boot partition to
+# make a folder so we can mount the boot partition
 		mkdir mnt/rootfs/boot && \
 		umount mnt/boot mnt/rootfs
 	"
 
-# Unmount the loop-mounted disk
+# Drop the loop mount
 losetup -d /dev/loop0
 
 # Compress the image

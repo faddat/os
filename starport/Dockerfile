@@ -157,7 +157,7 @@ COPY dns /etc/systemd/resolved.conf.d/dns_servers.conf
 RUN systemctl enable systemd-resolved
 
 # enable mdns
-RUN systemd-resolve --set-mdns=yes --interface=eth0
+# RUN systemd-resolve --set-mdns=yes --interface=eth0
 
 # enable zerotier-one
 RUN systemctl enable zerotier-one
