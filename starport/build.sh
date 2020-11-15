@@ -26,8 +26,12 @@ docker build --rm --tag toolbox --file toolbox/Dockerfile.root toolbox
 
 # remove anything in the way of extraction
 docker run --rm --tty --volume $(shell pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. toolbox rm -rf ./.tmp/result-rootfs
-#
+# save the image to result-rootfs.tar
 docker save --output ./.tmp/result-rootfs.tar starport
+# Extract the image using docker-extract
+docker run --rm --tty --volume $(shell pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. toolbox /tools/docker-extract --root ./.tmp/result-rootfs  ./.tmp/result-rootfs.tar
+
+
 
 
 
