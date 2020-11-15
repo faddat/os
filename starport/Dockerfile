@@ -65,7 +65,6 @@ RUN pacman --noconfirm -S \
 				nano \
 				bc \
 				e2fsprogs \
-				netctl \
 				parted
 
 
@@ -100,15 +99,9 @@ RUN pacman -S --needed --noconfirm sudo && \
 #		systemctl enable netctl-ifplugd@eth0.service
 
 
-RUN cat <<EOF >"/etc/netctl/wlan0-SSID" \
-		Description='Baked in profile' \
-		Interface=wlan0 \
-		Connection=wireless \
-		Security=wpa \
-		ESSID="SSID" \
-		IP=dhcp \
-		Key="PASSWORD" \
-		EOF
+# COPY wifi /etc/netctl/wlan0-SSID
+# re-do for systemd-networkd later
+# file wifi is better suited to netctl
 
 # Use the Pi's Hardware rng.  You may wish to modify depending on your needs and desires: https://wiki.archlinux.org/index.php/Random_number_generation#Alternatives
 RUN echo 'RNGD_OPTS="-o /dev/random -r /dev/hwrng"' > /etc/conf.d/rngd && \
