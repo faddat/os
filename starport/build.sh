@@ -40,21 +40,25 @@ docker run --rm --tty --volume $(pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp
 bash -c "echo starport > ./.tmp/result-rootfs/etc/hostname"
 
 
+
 # Make the .img file
 mkdir -p images
 sudo bash -x -c ' \
+# Create an empty image file and fill it with zeros.  6GB in this case.
 	dd if=/dev/zero of=images/starport.img bs=512 count=12582912 \
 	&& device=`losetup --find --show images/starport.img` \
-	&& bash -c " \
+# Use the toolbox to copy the rootfs into the filesystem
+	&& docker run --rm --tty --privileged --volume $(pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. toolbox bash -c " \
 		mkdir -p mnt/boot mnt/rootfs \
-		&& mount $(_CARD_BOOT) mnt/boot \
-		&& mount $(_CARD_ROOTFS) mnt/rootfs \
-		&& rsync -a --info=progress2 $(_RPI_RESULT_ROOTFS)/boot/* mnt/boot \
-		&& rsync -a --info=progress2 $(_RPI_RESULT_ROOTFS)/* mnt/rootfs --exclude boot \
+		&& mount /dev/mmcblk1p1 mnt/boot \
+		&& mount /dev/mmcblk1p2 mnt/rootfs \
+		&& rsync -a --info=progress2 ./.tmp/result-rootfs/boot/* mnt/boot \
+		&& rsync -a --info=progress2 ./.tmp/result-rootfs/* mnt/rootfs --exclude boot \
 		&& mkdir mnt/rootfs/boot \
 		&& umount mnt/boot mnt/rootfs \
 	"
 	&& losetup -d $$device \
 '
+# Compress the image
 bzip2 images/starport.img
 sha1sum images/starport.img.bz2 | awk '{print $$1}' > images/starport.img.bz2.sha1
