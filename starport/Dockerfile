@@ -81,16 +81,16 @@ RUN pacman --noconfirm -S \
 
 
 # disable dnssec
-RUN echo "DNSSEC=no" >> /etc/systemd/resolved.conf \
-		&& systemctl enable systemd-resolved
+RUN echo "DNSSEC=no" >> /etc/systemd/resolved.conf && \
+		systemctl enable systemd-resolved
 
 
 # yay
-RUN pacman -S --needed --noconfirm sudo && \# Install sudo
-		useradd builduser -m && \ # Create the builduser
-		passwd -d builduser && \# Delete the buildusers password
-		printf 'builduser ALL=(ALL) ALL\n' | tee -a /etc/sudoers && \# Allow the builduser passwordless sudo
-		sudo -u builduser bash -c 'cd ~ && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -s --noconfirm'  # Clone and build a package
+RUN pacman -S --needed --noconfirm sudo && \
+		useradd builduser -m && \
+		passwd -d builduser && \
+		printf 'builduser ALL=(ALL) ALL\n' | tee -a /etc/sudoers && \
+		sudo -u builduser bash -c 'cd ~ && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -s --noconfirm'
 
 
 # Set up wifi, which has the side effect of allowing us to finish the build

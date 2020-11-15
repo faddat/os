@@ -12,7 +12,7 @@
 set -exo pipefail
 
 # Get the 64 bit rpi rootfs for Pi 3 and 4
-wget -nc --progress=bar:force:noscroll http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
+wget -N --progress=bar:force:noscroll http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
 
 # Reintroduce later
 # export ROOT_PASSWD=root
