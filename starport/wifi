@@ -5,4 +5,4 @@ Security=wpa
 ESSID="SSID"
 IP=dhcp
 Key="PASSWORD"
-EOF
+

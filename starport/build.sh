@@ -45,7 +45,7 @@ docker run --rm --tty --volume $(pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp
 bash -c "echo starport > ./.tmp/result-rootfs/etc/hostname"
 
 # Tell pi where its memory card is
-sed -i 's/mmcblk0/mmcblk1/g' ./.tmp/result-rootfs/root/etc/fstab
+sed -i 's/mmcblk0/mmcblk1/g' ./.tmp/result-rootfs/etc/fstab
 
 
 
