@@ -11,6 +11,9 @@
 # Fail on error
 set -exo pipefail
 
+# Print each command
+set -o xtrace
+
 # Get the 64 bit rpi rootfs for Pi 3 and 4
 wget -N --progress=bar:force:noscroll http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
 
@@ -58,7 +61,9 @@ rm -rf images | true
 mkdir -p images
 
 # Make the image file
-fallocate -l 6G "images/starport.img"
+fallocate -l 3.5G "images/starport.img"
+
+losetup -d /dev/loop0 | true
 
 # loop-mount the image file so it becomes a disk
 losetup --find --show images/starport.img
