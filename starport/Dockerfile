@@ -44,7 +44,7 @@ RUN pacman --noconfirm -Syy \
 				ca-certificates-utils
 
 # Utilities
-RUN pacman --noconfirm -S \
+RUN pacman --noconfirm -Syyu \
 				base \
 				base-devel \
 				vim \
@@ -70,7 +70,7 @@ RUN pacman --noconfirm -S \
 
 
 # dependencies is specific to our work
-RUN pacman --noconfirm -S \
+RUN pacman --noconfirm -Syyu \
 				go \
 				npm \
 				go-ipfs \
