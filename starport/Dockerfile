@@ -197,7 +197,6 @@ RUN sed -i -e "s/^#!!!CheckSpace/CheckSpace/g" /etc/pacman.conf
 # Note: this varies between Pi3 and Pi4, both of which are supported by this script.
 # mmcblk0 = pi3
 # mmcblk1 = pi4
-RUN sed -i 's/mmcblk0/mmcblk1/g' /root/etc/fstab
 
 
 ENV LD_PRELOAD=
