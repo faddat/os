@@ -80,7 +80,7 @@ mkfs.ext4 -F /dev/loop0p2
 # * use rsync to copy files into the filesystem
 # make a folder so we can mount the boot partition
 
-	&& docker run --rm --tty --privileged --volume $(pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. toolbox bash -c " \
+docker run --rm --tty --privileged --volume $(pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. toolbox bash -c " \
 		mkdir -p mnt/boot mnt/rootfs && \
 		mount /dev/loop0p1 mnt/boot && \
 		mount /dev/loop0p2 mnt/rootfs && \
