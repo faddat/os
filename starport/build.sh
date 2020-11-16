@@ -53,12 +53,12 @@ bash -c "echo starport > ./.tmp/result-rootfs/etc/hostname"
 # ===================================================================================
 
 # Create a folder for images
+
+rm -rf images | true
 mkdir -p images
 
-
 # Make the image file
-fallocate -l 3G "starport.img"
-
+fallocate -l 6G "images/starport.img"
 
 # loop-mount the image file so it becomes a disk
 losetup --find --show images/starport.img
