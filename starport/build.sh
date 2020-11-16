@@ -44,8 +44,7 @@ docker run --rm --tty --volume $(pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp
 # Set hostname
 bash -c "echo starport > ./.tmp/result-rootfs/etc/hostname"
 
-# Tell pi where its memory card is
-sed -i 's/mmcblk0/mmcblk1/g' ./.tmp/result-rootfs/etc/fstab
+
 
 
 
@@ -89,6 +88,9 @@ mkfs.ext4 -F /dev/loop0p2
 		mkdir mnt/rootfs/boot && \
 		umount mnt/boot mnt/rootfs
 	"
+
+# Tell pi where its memory card is
+sed -i 's/mmcblk0/mmcblk1/g' ./.tmp/result-rootfs/etc/fstab
 
 # Drop the loop mount
 losetup -d /dev/loop0

@@ -65,7 +65,8 @@ RUN pacman --noconfirm -S \
 				nano \
 				bc \
 				e2fsprogs \
-				parted
+				parted \
+				bash-completion
 
 
 # dependencies is specific to our work
@@ -161,6 +162,10 @@ RUN systemctl enable systemd-resolved
 
 # enable zerotier-one
 RUN systemctl enable zerotier-one
+
+# give the wheel group sudo
+RUN echo '%wheel ALL=(ALL) ALL' >> /etc/sudoers.d/wheel
+
 
 
 # mdns makes it easy to find your pi
