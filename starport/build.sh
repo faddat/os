@@ -46,8 +46,6 @@ bash -c "echo starport > ./.tmp/result-rootfs/etc/hostname"
 
 
 
-
-
 # ===================================================================================
 # IMAGE: Make a .img file and compress it.
 # Uses Techniques from Disconnected Systems:
@@ -59,7 +57,7 @@ mkdir -p images
 
 
 # Make the image file
-fallocate -l 2G "starport.img"
+fallocate -l 3G "starport.img"
 
 
 # loop-mount the image file so it becomes a disk
@@ -67,8 +65,8 @@ losetup --find --show images/starport.img
 
 # partition the loop-mounted disk
 parted --script /dev/loop0 mklabel msdos
-parted --script /dev/loop0 mkpart primary fat32 0% 100M
-parted --script /dev/loop0 mkpart primary ext4 100M 100%
+parted --script /dev/loop0 mkpart primary fat32 0% 200M
+parted --script /dev/loop0 mkpart primary ext4 200M 100%
 
 # format the newly partitioned loop-mounted disk
 mkfs.vfat -F32 /dev/loop0p1
